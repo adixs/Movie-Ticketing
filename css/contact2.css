@@ -1,0 +1,120 @@
+
+
+
+
+
+/* utility classes */
+.container{
+    margin: auto;
+    max-width: 1100px;
+    overflow: auto;
+    padding: 0 20px;
+}
+.text-primary{
+    color: #ffffff;
+}
+.lead {
+    font-size: 20px;
+
+}
+.btn{
+    display: inline-block;
+    font-size: 18px;
+    color: #ffffff;
+    background: #333;
+    padding: 13px 20px;
+    border: none;
+    cursor: pointer;
+}
+.btn:hover{
+    background:#1a58df ;
+    color: #ffffff;
+}
+.btn-light{
+    background: #ffffff;
+    color: #333;
+}
+.bg-darc{
+    background: #00000000;
+    color: #fff;
+}
+.bg-light{
+    background: #f4f4f4;
+    color: #333;
+}
+.bg-primary{
+    background: #f7c08a;
+    color: #333;
+}
+.clr{
+    clear: both;
+}
+.l-heading{
+    font-size: 40px;
+}
+
+
+
+/* padding */
+
+.py-1{ padding: 10px 0;}
+.py-2{ padding: 20px 0;}
+.py-3{ padding: 30px 0;}
+
+
+
+
+
+/* features */
+.box{
+    float:left;
+    width: 33.3%;
+    padding: 50px;
+}
+.box i {
+    margin-bottom: 10px;
+}
+
+
+
+/* contact form */
+
+#contact-form .form-group{
+    margin-bottom: 20px;
+    color: #ddd;
+} 
+
+#contact-form label{
+    display: block;
+    margin-bottom: 5px;
+}
+
+#contact-form input,
+#contact-form textarea{
+    width: 100%;
+    padding: 10px;
+    border: 1px #ddd solid;
+}
+#contact-form textarea{
+    height: 200px;
+}
+#contact-form input:focus,
+#contact-form textarea:focus{
+    outline: none;
+    border-color: #f7c08a;
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
