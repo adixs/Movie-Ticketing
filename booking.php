@@ -1,147 +1,60 @@
+<?php
+include 'db.php';
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // Collect and sanitize input
+    $movie_id = $_POST['movie_id'];
+    $name = htmlspecialchars($_POST['name']);
+    $email = htmlspecialchars($_POST['email']);
+    $seats = intval($_POST['seats']);
+
+    // Prepare and execute the SQL statement
+    $stmt = $conn->prepare("INSERT INTO bookings (movie_id, name, email, seats) VALUES (?, ?, ?, ?)");
+    $stmt->bind_param("issi", $movie_id, $name, $email, $seats);
+
+    if ($stmt->execute()) {
+        echo "Booking confirmed!";
+    } else {
+        echo "Error: " . $stmt->error;
+    }
+
+    $stmt->close();
+} else {
+    // Fetch movie details
+    $movie_id = 34; // The movie ID to book
+    $stmt = $conn->prepare("SELECT * FROM movies WHERE id = ?");
+    $stmt->bind_param("i", $movie_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $movie = $result->fetch_assoc();
+    $stmt->close();
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <title>SAVOY</title>
-    <link rel="stylesheet" href="css/s.css">
-    
-    <style>
-      
-    </style>
-  </head>
-  <body>
-    
-    <div>
-      <img class="main-logo" src="./image/savoy.png"/>
-    </div>
+<head>
+    <meta charset="UTF-8">
+    <title>Book Ticket</title>
+</head>
+<body>
+    <h1>Book Ticket for <?php echo htmlspecialchars($movie['title']); ?></h1>
+    <img src="<?php echo htmlspecialchars($movie['image']); ?>" alt="Movie Image" style="width:200px;height:auto;">
+    <p>Rating: <?php echo htmlspecialchars($movie['rating']); ?></p>
+    <p>Release Date: <?php echo htmlspecialchars($movie['release_date']); ?></p>
+    <p><?php echo htmlspecialchars($movie['description']); ?></p>
 
-     
-    <div class="movie-container">
-      <label style="font-size: 1em;">Pick a movie:</label>
-      <select id="movie">
-        <option value="10">Jurassic Park ($10)</option>
-        <option value="12">Logan ($12)</option>
-        <option value="8">Avengers Infinity War ($8)</option>
-      </select>
-    </div>
-
-    <ul class="showcase">
-      <li>
-        <div id="seat" class="seat"></div>
-        <small class="status" style="font-size: 1em;">N/A</small>
-      </li>
-      <li>
-        <div id="seat" class="seat selected"></div>
-        <small class="status" style="font-size: 1em;">Selected</small>
-      </li>
-      <li>
-        <div id="seat" class="seat occupied"></div>
-        <small class="status" style="font-size: 1em;">Occupied</small>
-      </li>
-    </ul>
-
-    <div class="container">
-      <div class="screen"></div>
-
-      <div class="row">
-        <div id="seat" class="seat"></div>
-        <div id="seat" class="seat"></div>
-        <div id="seat" class="seat"></div>
-        <div id="seat" class="seat"></div>
-        <div id="seat" class="seat"></div>
-        <div id="seat" class="seat"></div>
-        <div id="seat" class="seat"></div>
-        <div id="seat" class="seat"></div>
-      </div>
-      <div class="row">
-        <div id="seat" class="seat"></div>
-        <div id="seat" class="seat"></div>
-        <div id="seat" class="seat"></div>
-        <div id="seat" class="seat occupied"></div>
-        <div id="seat" class="seat occupied"></div>
-        <div id="seat" class="seat"></div>
-        <div id="seat" class="seat"></div>
-        <div id="seat" class="seat"></div>
-      </div>
-      <div class="row">
-        <div id="seat" class="seat"></div>
-        <div id="seat" class="seat"></div>
-        <div id="seat" class="seat"></div>
-        <div id="seat" class="seat"></div>
-        <div id="seat" class="seat"></div>
-        <div id="seat" class="seat"></div>
-        <div id="seat" class="seat occupied"></div>
-        <div id="seat" class="seat occupied"></div>
-      </div>
-      <div class="row">
-        <div id="seat" class="seat"></div>
-        <div id="seat" class="seat"></div>
-        <div id="seat" class="seat"></div>
-        <div id="seat" class="seat"></div>
-        <div id="seat" class="seat"></div>
-        <div id="seat" class="seat"></div>
-        <div id="seat" class="seat"></div>
-        <div id="seat" class="seat"></div>
-      </div>
-      <div class="row">
-        <div id="seat" class="seat"></div>
-        <div id="seat" class="seat"></div>
-        <div id="seat" class="seat"></div>
-        <div id="seat" class="seat occupied"></div>
-        <div id="seat" class="seat occupied"></div>
-        <div id="seat" class="seat"></div>
-        <div id="seat" class="seat"></div>
-        <div id="seat" class="seat"></div>
-      </div>
-      <div class="row">
-        <div id="seat" class="seat"></div>
-        <div id="seat" class="seat"></div>
-        <div id="seat" class="seat"></div>
-        <div id="seat" class="seat"></div>
-        <div id="seat" class="seat occupied"></div>
-        <div id="seat" class="seat occupied"></div>
-        <div id="seat" class="seat occupied"></div>
-        <div id="seat" class="seat"></div>
-      </div>
-    </div>
-
-    <p class="text" style="font-size: 1em;margin:0px 0px 15px 0px">
-      You have selected <span id="count">0</span> seats for a price of $<span
-        id="total"
-        >0</span
-      >
-    </p>
-
-    <a href="./in.php">
-      <button class="btn-home">
-        Home
-      </button>
-    </a>
-    
-
-    <script>
-     
-      var count=0;
-      var seats=document.getElementsByClassName("seat");
-      for(var i=0;i<seats.length;i++){
-        var item=seats[i];
-        
-        item.addEventListener("click",(event)=>{
-          var price= document.getElementById("movie").value;
-
-          if (!event.target.classList.contains('occupied') && !event.target.classList.contains('selected') ){
-          count++;
-          
-          var total=count*price;
-          event.target.classList.add("selected");
-          document.getElementById("count").innerText=count;
-          document.getElementById("total").innerText=total;
-
-          }
-        })
-      }
-    </script>
-  </body>
+    <form method="post" action="">
+        <input type="hidden" name="movie_id" value="<?php echo $movie['id']; ?>">
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" required><br><br>
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required><br><br>
+        <label for="seats">Number of Seats:</label>
+        <input type="number" id="seats" name="seats" min="1" required><br><br>
+        <input type="submit" value="Book Now">
+    </form>
+    <a href="index.php">Back to Movies</a>
+</body>
 </html>
+s
