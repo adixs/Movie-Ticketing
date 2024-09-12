@@ -1,60 +1,119 @@
 <?php
-include 'db.php';
+$servername = "localhost";
+$username = "root";
+$password = "";
+$dbname = "savoy_db";
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Collect and sanitize input
-    $movie_id = $_POST['movie_id'];
-    $name = htmlspecialchars($_POST['name']);
-    $email = htmlspecialchars($_POST['email']);
-    $seats = intval($_POST['seats']);
+// Create connection
+$conn = new mysqli($servername, $username, $password, $dbname);
 
-    // Prepare and execute the SQL statement
-    $stmt = $conn->prepare("INSERT INTO bookings (movie_id, name, email, seats) VALUES (?, ?, ?, ?)");
-    $stmt->bind_param("issi", $movie_id, $name, $email, $seats);
+// Check connection
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
 
-    if ($stmt->execute()) {
-        echo "Booking confirmed!";
-    } else {
-        echo "Error: " . $stmt->error;
-    }
+$movie = null;
+$message = "";  // Variable to hold any success or error messages
 
-    $stmt->close();
-} else {
-    // Fetch movie details
-    $movie_id = 34; // The movie ID to book
-    $stmt = $conn->prepare("SELECT * FROM movies WHERE id = ?");
+if (isset($_GET['id'])) {
+    $movie_id = $_GET['id'];
+    $price = $_GET['price'];
+
+    // Prepare and execute SQL query to get movie details
+    $sql = "SELECT * FROM movies WHERE id = ?";
+    $stmt = $conn->prepare($sql);
     $stmt->bind_param("i", $movie_id);
     $stmt->execute();
     $result = $stmt->get_result();
     $movie = $result->fetch_assoc();
-    $stmt->close();
+
+    // Check if the movie exists
+    if ($movie) {
+        // Check if the form is submitted
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            $name = $_POST['name'];
+            $seats = $_POST['seats'];
+            $total_price = $seats * $price; // Calculate total price
+
+            // Validate available seats
+            if ($seats <= $movie['available_seats']) {
+                // Insert booking into the database
+                $sql = "INSERT INTO bookings (movie_id, name, seats, total) VALUES (?, ?, ?, ?)";
+                $stmt = $conn->prepare($sql);
+                $stmt->bind_param("isid", $movie_id, $name, $seats, $total_price);
+                if ($stmt->execute()) {
+                    // Update the available seats
+                    $new_available_seats = $movie['available_seats'] - $seats;
+                    $sql = "UPDATE movies SET available_seats = ? WHERE id = ?";
+                    $stmt = $conn->prepare($sql);
+                    $stmt->bind_param("ii", $new_available_seats, $movie_id);
+                    if ($stmt->execute()) {
+                        $message = "Booking successful! You have booked $seats seat(s) for the movie '" . htmlspecialchars($movie['title']) . "'. Total price: $" . number_format($total_price, 2) . ".";
+                    } else {
+                        $message = "Error updating available seats.";
+                    }
+                } else {
+                    $message = "Error inserting booking.";
+                }
+            } else {
+                $message = "Not enough seats available!";
+            }
+        }
+
+        $stmt->close();
+    } else {
+        $message = "Movie not found.";
+    }
+} else {
+    $message = "Movie ID not provided.";
 }
+
+$conn->close();
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Book Ticket</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movie Booking</title>
 </head>
 <body>
-    <h1>Book Ticket for <?php echo htmlspecialchars($movie['title']); ?></h1>
-    <img src="<?php echo htmlspecialchars($movie['image']); ?>" alt="Movie Image" style="width:200px;height:auto;">
-    <p>Rating: <?php echo htmlspecialchars($movie['rating']); ?></p>
-    <p>Release Date: <?php echo htmlspecialchars($movie['release_date']); ?></p>
-    <p><?php echo htmlspecialchars($movie['description']); ?></p>
 
-    <form method="post" action="">
-        <input type="hidden" name="movie_id" value="<?php echo $movie['id']; ?>">
-        <label for="name">Name:</label>
+<?php if (!empty($message)) { ?>
+    <p><?php echo $message; ?></p>
+    <?php unset($message); ?>
+<?php } ?>
+
+<!-- Booking Form -->
+<?php if (isset($movie)) { ?>
+    <img src="<?php echo htmlspecialchars($movie['image']); ?>" alt="Movie Image">
+    <h2>Book Tickets for <?php echo htmlspecialchars($movie['title']); ?></h2>
+    <form method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']) . "?id=" . $movie_id . "&price=" . $price; ?>">
+        <label for="name">Your Name:</label>
         <input type="text" id="name" name="name" required><br><br>
-        <label for="email">Email:</label>
-        <input type="email" id="email" name="email" required><br><br>
+
         <label for="seats">Number of Seats:</label>
-        <input type="number" id="seats" name="seats" min="1" required><br><br>
-        <input type="submit" value="Book Now">
+        <input type="number" id="seats" name="seats" min="1" max="<?php echo htmlspecialchars($movie['available_seats']); ?>" required oninput="calculateTotalPrice()"><br><br>
+
+        <input type="hidden" id="price" name="price" value="<?php echo htmlspecialchars($price); ?>">
+
+        <p>Total Price: $<span id="totalPrice">0.00</span></p>
+
+        <button type="submit">Book Now</button>
     </form>
-    <a href="index.php">Back to Movies</a>
+    <p>Available Seats: <?php echo htmlspecialchars($movie['available_seats']); ?></p>
+<?php } ?>
+
+<script>
+function calculateTotalPrice() {
+    var seats = document.getElementById('seats').value;
+    var price = document.getElementById('price').value;
+    var totalPrice = seats * price;
+    document.getElementById('totalPrice').innerText = totalPrice.toFixed(2);
+}
+</script>
+
 </body>
 </html>
-s

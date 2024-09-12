@@ -1,4 +1,5 @@
 <?php
+session_start();
 // Connection to MySQL
 $servername = "localhost";
 $username = "root";
@@ -40,10 +41,30 @@ $result = $conn->query($sql);
             </a>
         </div>
         <nav>
-            <ul>
-                <li><a class="nav-link" href="index.php">MOVIES</a></li>
-                <li><a class="nav-link" href="contact.php">CONTACT</a></li>
-            </ul>
+        <?php
+
+?>
+<ul>
+    <li><a class="nav-link" href="index.php">MOVIES</a></li>
+    <li><a class="nav-link" href="contact.php">CONTACT</a></li>
+    <?php
+    // Display "Add Movie" link if the user is an admin
+    if (isset($_SESSION['roll']) && $_SESSION['roll'] == "admin") {
+        echo '<li><a class="nav-link" href="addmovie.php">Add Movie</a></li>';
+    }
+    ?>
+    
+    <?php
+    // Display "Logout" link if the user is logged in; otherwise, show "Login" and "Sign Up"
+    if (isset($_SESSION['user_id']) && $_SESSION['user_id'] !== null) {
+        echo '<li><a class="nav-link" href="logout.php">Logout</a></li>';
+    } else {
+        echo '<li><a class="nav-link" href="login.php">Login</a></li>';
+        echo '<li><a class="nav-link" href="registration.php">Sign Up</a></li>';
+    }
+    ?>
+</ul>
+
         </nav>
     </div>
 </header>
@@ -119,7 +140,7 @@ $result = $conn->query($sql);
 <!-- Footer -->
 <section>
     <footer class="bottom">
-        <p class="copyright">© Created by 2024 / Achini Nethmini</p>
+        <p class="copyright">© Created by 2024 / Adithya Abeysekara</p>
         <div class="legal"></div>
     </footer>
 </section>

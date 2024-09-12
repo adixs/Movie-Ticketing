@@ -70,9 +70,12 @@ if (!$movie) {
             <h3>Release Date: <?php echo htmlspecialchars($movie['release_date']); ?><i class="fa fa-indent"></i></h3>
             <br />
             <p><?php echo htmlspecialchars($movie['description']); ?></p>
+            <p>Rs<?php echo htmlspecialchars($movie['price']); ?></p>
             <div class="class">
-                <a href="booking.php?id=<?php echo urlencode($movie['id']); ?>" class="button">Book Now</a>
-                <button>Watch Trailer</button>
+            <a href="booking.php?id=<?php echo urlencode($movie['id']); ?>&price=<?php echo urlencode($movie['price']); ?>" class="button">Book Now</a>
+
+                <a href="<?php echo $movie['mvtle']; ?>" class="button">Watch Trailer</a>
+
             </div>
         </div>
     </div>

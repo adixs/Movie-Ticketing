@@ -8,10 +8,8 @@
 
 :root {
   --color-primary: #020d18;
-  /* --color-secondary: #f1c40f; */
   --color-secondary: #921515;
-  
-  --color-logo-first :#FF2300;
+  --color-logo-first: #FF2300;
   --color-logo-second: #0066CC;
 }
 
@@ -19,9 +17,8 @@ body {
   font-family: 'Poppins', sans-serif;
   font-size: 16px;
   background: var(--color-primary);
-  /* color: #fff; */
   overflow-x: hidden;
-  color:rgb(255, 255, 255)
+  color: rgb(255, 255, 255);
 }
 
 a {
@@ -83,6 +80,12 @@ ul {
   padding: 0 20px;
 }
 
+/* Modern Header */
+.main-header {
+  padding: 20px 0;
+  background: rgba(255, 255, 255, 1);
+}
+
 .main-header .container {
   display: flex;
   justify-content: space-between;
@@ -90,22 +93,17 @@ ul {
   padding: 0 20px;
 }
 
-.main-header {
-  padding: 20px 0;
-  background: rgba(255, 255, 255, 1);
-}
-
 .main-header .logo {
-  /* color: #fff; */
   font-size: 25px;
   font-weight: 700;
   text-transform: uppercase;
-  /* color: var(--color-logo-second); */
 }
-.main-header .logo .egy{
-  color :var(--color-logo-second)
+
+.main-header .logo .SAV {
+  color: var(--color-logo-second);
 }
-.main-header .logo .best{
+
+.main-header .logo .best {
   color: var(--color-logo-first);
 }
 
@@ -119,10 +117,87 @@ ul {
 
 .main-header ul li a {
   font-size: 16px;
+  color: #000; /* Adjust color as needed */
+  text-decoration: none;
 }
 
 .main-header ul li a:hover {
   color: var(--color-secondary);
+}
+
+/* Modern Heading */
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 700;
+  margin: 0;
+  padding: 0;
+  text-transform: uppercase;
+}
+
+h1 {
+  font-size: 2.5rem;
+  color: var(--color-logo-first);
+  border-bottom: 2px solid var(--color-logo-first);
+  padding-bottom: 10px;
+  margin-bottom: 20px;
+}
+
+h2 {
+  font-size: 2rem;
+  color: var(--color-secondary);
+  border-bottom: 2px solid var(--color-secondary);
+  padding-bottom: 8px;
+  margin-bottom: 18px;
+}
+
+h3 {
+  font-size: 1.75rem;
+  color: var(--color-logo-second);
+  margin-bottom: 16px;
+}
+
+h4 {
+  color: #fff;
+  margin-bottom: 14px;
+}
+
+h5 {
+  font-size: 1.25rem;
+  color: #ddd;
+  margin-bottom: 12px;
+}
+
+h6 {
+  font-size: 1rem;
+  color: #bbb;
+  margin-bottom: 10px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  h1 {
+    font-size: 2rem;
+  }
+
+  h2 {
+    font-size: 1.5rem;
+  }
+
+  h3 {
+    font-size: 1.25rem;
+  }
+
+  h4 {
+    font-size: 1rem;
+  }
+
+  h5 {
+    font-size: 0.875rem;
+  }
+
+  h6 {
+    font-size: 0.75rem;
+  }
 }
 
 /* Grid */
@@ -188,11 +263,9 @@ ul {
 }
 
 /* Section: Now Playing */
-
 section.now-playing {
   padding: px;
   background: url(../images/showcase-bg.jpg) no-repeat center center/cover;
-  
 }
 
 section h2 {
@@ -259,7 +332,6 @@ section h2 {
 .details-top .btn {
   margin-top: 20px;
 }
-
 
 .details-bottom li {
   margin: 15px 0;
@@ -360,9 +432,3 @@ section h2 {
 .error {
   background: red;
 }
-
-
-
-
-
-
