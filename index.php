@@ -41,9 +41,7 @@ $result = $conn->query($sql);
             </a>
         </div>
         <nav>
-        <?php
 
-?>
 <ul>
     <li><a class="nav-link" href="index.php">MOVIES</a></li>
     <li><a class="nav-link" href="contact.php">CONTACT</a></li>
